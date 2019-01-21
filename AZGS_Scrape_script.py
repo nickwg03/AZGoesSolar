@@ -67,7 +67,11 @@ class AZScrape(object):
                     morepages = False
                     continue
                 try:
-                    driver.find_element_by_link_text("Next").click()  # click on "next" button to go to next page
+                    # this section is for catching errors. If running on debug, when clicking next fails, can debug and continue without having to start from the beginning
+                    try:
+                        driver.find_element_by_link_text("Next").click()
+                    except:
+                        print('wait')
                     time.sleep(2)  # give chance for page to load
                     WebDriverWait(driver,10).until(EC.presence_of_element_located((By.LINK_TEXT, "Next")))  # since each page already has a "Next" button, this doesn't actually wait for new page to load - causing some duplication of extraction text files.
                 except:
@@ -106,7 +110,7 @@ class AZScrape(object):
                                 pass
 
 
-    def checkadditionalattributes(self, incoming):
+    def checkadditionalattributes(self, incoming, attributes_l):
         """
         Checks through all programs and searches for additional fields.
         This is optional, but should be ran each year to ensure new additional fields haven't been added.
